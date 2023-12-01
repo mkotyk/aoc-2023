@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "input.h"
 
 void read_input(const char *filename, cb_on_line on_line, cb_on_error on_error)
@@ -12,4 +13,18 @@ void read_input(const char *filename, cb_on_line on_line, cb_on_error on_error)
     } else {
         on_error("Unable to open input file");
     }
+}
+
+void split_line(const char *line, const char *delims, cb_on_token on_token)
+{
+    const char *start = line;
+    const char *ptr = start;
+    while(*ptr != '\0') {
+        if (strchr(delims, *ptr) != NULL) {
+            on_token(start, ptr);
+            start = ptr + 1;
+        }
+        ptr++;
+    }
+    if (start < ptr) on_token(start, ptr);
 }
