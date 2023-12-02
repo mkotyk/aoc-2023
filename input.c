@@ -4,11 +4,15 @@
 #include "input.h"
 
 void read_input(const char *filename, cb_on_line on_line, cb_on_error on_error, void* ctx) {
-    char *ptr, buffer[100];
+    char *ptr, buffer[255];
     FILE *in;
     int line_num = 1;
+    int line_length;
     if ((in = fopen(filename, "rt")) != NULL) {
         while((ptr = fgets(buffer, sizeof(buffer) - 1, in)) != NULL) {
+            line_length = strlen(buffer);
+            if (buffer[line_length - 1] == '\n')
+                buffer[line_length - 1] = '\0';
             on_line(ptr, line_num, ctx);
             line_num++;
         }
