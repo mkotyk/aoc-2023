@@ -13,3 +13,11 @@ The selection of vintage computers are all from the late 1980's and have a C com
 * May be out due to hardware issues
 ** Orignal 20MB hard drive died and was replaced
 
+
+## Day 1
+
+| Computer | Sample 1 | Part 1 | Sample 2 | Part 2 |
+|----------|----------|--------|----------|--------|
+| PC 40    | 00:00:00 | 00:00:14 | 00:00:00 | 00:00:12 |
+| Amiga | | | | |
+| Mac | | | | |
