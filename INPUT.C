@@ -18,10 +18,19 @@ void read_input(const char *filename, cb_on_line on_line, cb_on_error on_error, 
     }
 }
 
+char *strdup(const char *src) {
+	char *copy = malloc(strlen(src) + 1);
+	if (copy != NULL) {
+		strcpy(copy, src);
+	}
+	return copy;
+}
+
 void sample_input(const char *input, cb_on_line on_line, void* ctx) {
     char *copy, *ptr, *start;
     int line_num = 1;
-    if ((copy = strdup(input)) != NULL) {
+    copy = strdup(input);
+    if (copy != NULL) {
         start = copy;
         while((ptr = strchr(start, '\n')) != NULL) {
             *ptr = '\0';
@@ -47,4 +56,3 @@ void split_line(const char *line, const char *delims, cb_on_token on_token, void
     }
     if (start < ptr) on_token(start, ptr, ctx);
 }
-

@@ -57,7 +57,7 @@ int main() {
                              "xtwone3four\n"
                              "4nineeightseven2\n"
                              "zoneight234\n"
-							 "7pqrstsixteen";
+			     "7pqrstsixteen";
 
     timer_start(&clock);
     sample_input(sample, handle_input_part1, &result);
@@ -89,4 +89,4 @@ int main() {
 
     return 0;
 }
-
+
