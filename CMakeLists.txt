@@ -3,4 +3,6 @@ project(aoc-2023 C)
 
 set(CMAKE_C_STANDARD 90)
 
-add_executable(day1 day1/main.c utils/input.c utils/strtools.c utils/timer.c)
+add_executable(day1 day1.c input.c strtools.c timer.c)
+add_executable(day2 day2.c input.c strtools.c timer.c
+)

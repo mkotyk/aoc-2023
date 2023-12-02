@@ -4,9 +4,9 @@
 int compare(const char* s1_start, const char* s1_end, const char* s2_start, const char* s2_end) {
     int s1_dir = MAX(MIN(s1_end - s1_start, 1), -1);
     int s2_dir = MAX(MIN(s2_end - s2_start, 1), -1);
-    if (s1_dir == 0 || s2_dir == 0) return -1;
     const char* s1_ptr = s1_start;
     const char* s2_ptr = s2_start;
+    if (s1_dir == 0 || s2_dir == 0) return -1;
     while(1) {
         if (*s1_ptr != *s2_ptr) return -1;
         s1_ptr += s1_dir;

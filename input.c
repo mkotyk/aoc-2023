@@ -4,11 +4,15 @@
 #include "input.h"
 
 void read_input(const char *filename, cb_on_line on_line, cb_on_error on_error, void* ctx) {
-    char *ptr, buffer[100];
+    char *ptr, buffer[255];
     FILE *in;
     int line_num = 1;
+    int line_length;
     if ((in = fopen(filename, "rt")) != NULL) {
         while((ptr = fgets(buffer, sizeof(buffer) - 1, in)) != NULL) {
+            line_length = strlen(buffer);
+            if (buffer[line_length - 1] == '\n')
+                buffer[line_length - 1] = '\0';
             on_line(ptr, line_num, ctx);
             line_num++;
         }
@@ -18,15 +22,28 @@ void read_input(const char *filename, cb_on_line on_line, cb_on_error on_error, 
     }
 }
 
+char *strdup(const char *src) {
+	char *copy = malloc(strlen(src) + 1);
+	if (copy != NULL) {
+		strcpy(copy, src);
+	}
+	return copy;
+}
+
 void sample_input(const char *input, cb_on_line on_line, void* ctx) {
     char *copy, *ptr, *start;
     int line_num = 1;
-    if ((copy = strdup(input)) != NULL) {
+    copy = strdup(input);
+    if (copy != NULL) {
         start = copy;
-        while((ptr = strsep(&start, "\n"))) {
-            on_line(ptr, line_num, ctx);
-            line_num++;
-        }
+        while((ptr = strchr(start, '\n')) != NULL) {
+            *ptr = '\0';
+			ptr++;
+			on_line(start, line_num, ctx);
+			start = ptr;
+			line_num++;
+		}
+		on_line(start, line_num, ctx);
         free(copy);
     }
 }
