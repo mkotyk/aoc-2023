@@ -8,5 +8,5 @@ typedef void (*cb_on_error)(const char *msg, void* ctx);
 void read_input(const char *filename, cb_on_line on_line, cb_on_error on_error, void* ctx);
 void sample_input(const char *input, cb_on_line on_line, void* ctx);
 void split_line(const char *line, const char *delims, cb_on_token on_token, void* ctx);
-
+char *strdup(const char *src);
 #endif
