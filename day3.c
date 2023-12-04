@@ -19,7 +19,7 @@ typedef struct {
 } gear_coord_t;
 
 struct context {
-    long result;
+	unsigned long result;
     const char *map;
     int width;
     int height;
@@ -38,9 +38,10 @@ int is_part(char c) {
 }
 
 char char_at_position(int x, int y, context_t* ctx) {
+	int offset;
     if (x < 0 || x >= ctx->width) return OOB;
     if (y < 0 || y >= ctx->height) return OOB;
-    int offset = x + y * ctx->width;
+	offset = x + y * ctx->width;
     return *(ctx->map + offset);
 }
 
@@ -121,7 +122,7 @@ void calc_ratios(context_t* ctx) {
         for(j = i + 1; j < ctx->num_gears; j++) {
             if ((ctx->gears[i].coord.x == ctx->gears[j].coord.x) &&
                 (ctx->gears[i].coord.y == ctx->gears[j].coord.y)) {
-                ctx->result += ctx->gears[i].value * ctx->gears[j].value;
+				ctx->result += (unsigned long)ctx->gears[i].value * (unsigned long)ctx->gears[j].value;
             }
         }
     }
@@ -179,7 +180,7 @@ int main() {
     calc_ratios(&context);
     time_end(&clock, "[PART2:SAMPLE]");
     printf("result: %ld\n", context.result);
-    ASSERT_EQUAL(context.result,  467835, "Part 2 sample answer did not match");
+	ASSERT_EQUAL(context.result, 467835, "Part 2 sample answer did not match");
 
     context.result = 0;
     context.width = context.height = 0;
@@ -192,7 +193,8 @@ int main() {
     free(context.map);
     time_end(&clock, "[PART2:INPUT]");
     printf("result: %ld\n", context.result);
-    ASSERT_EQUAL(context.result,  72227, "Part 2 input answer did not match");
+	ASSERT_EQUAL(context.result, 80694070, "Part 2 input answer did not match");
 
     return 0;
 }
+
