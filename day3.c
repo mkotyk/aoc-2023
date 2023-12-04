@@ -47,7 +47,7 @@ char char_at_position(int x, int y, context_t* ctx) {
 
 typedef enum {
     SCANNING,
-    ON_NUMBER,
+    ON_NUMBER
 } state_t;
 
 void measure(context_t* ctx) {
@@ -165,7 +165,7 @@ int main() {
     context.map = read_fully("day3.txt");
     measure(&context);
     scan_parts(&context);
-    free(context.map);
+    free((void *)context.map);
     time_end(&clock, "[PART1:INPUT]");
     printf("result: %ld\n", context.result);
     ASSERT_EQUAL(context.result, 521601, "Part 1 input answer did not match");
@@ -190,7 +190,7 @@ int main() {
     measure(&context);
     scan_parts(&context);
     calc_ratios(&context);
-    free(context.map);
+    free((void *)context.map);
     time_end(&clock, "[PART2:INPUT]");
     printf("result: %ld\n", context.result);
 	ASSERT_EQUAL(context.result, 80694070, "Part 2 input answer did not match");
