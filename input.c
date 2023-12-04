@@ -22,6 +22,24 @@ void read_input(const char *filename, cb_on_line on_line, cb_on_error on_error, 
     }
 }
 
+char *read_fully(const char *filename) {
+    FILE *in;
+    char *result = NULL;
+    long size;
+    if ((in = fopen(filename, "rt")) != NULL) {
+        fseek(in, 0L, SEEK_END);
+        size = ftell(in);
+        fseek(in, 0L, SEEK_SET);
+        result = malloc(sizeof(char) * size + 1);
+        if (result != NULL) {
+            fread(result, sizeof(char), size, in);
+        }
+        result[size] = '\0';
+        fclose(in);
+    }
+    return result;
+}
+
 char *strdup(const char *src) {
 	char *copy = malloc(strlen(src) + 1);
 	if (copy != NULL) {
