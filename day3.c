@@ -179,7 +179,7 @@ int main() {
     calc_ratios(&context);
     time_end(&clock, "[PART2:SAMPLE]");
     printf("result: %ld\n", context.result);
-    ASSERT_EQUAL(context.result,  467835, "Part 2 sample answer did not match");
+    ASSERT_EQUAL(context.result, 467835, "Part 2 sample answer did not match");
 
     context.result = 0;
     context.width = context.height = 0;
@@ -192,7 +192,7 @@ int main() {
     free(context.map);
     time_end(&clock, "[PART2:INPUT]");
     printf("result: %ld\n", context.result);
-    ASSERT_EQUAL(context.result,  72227, "Part 2 input answer did not match");
+    ASSERT_EQUAL(context.result, 80694070, "Part 2 input answer did not match");
 
     return 0;
 }
