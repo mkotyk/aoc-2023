@@ -3,23 +3,7 @@
 #include <stdarg.h>
 #include <printf.h>
 
-typedef struct {
-    const char *start;
-    const char *end;
-} range_t;
-
-const int MAX_CAPTURES = 50;
-
-typedef struct {
-    const char *start;
-    const char *end;
-    const char *pos;
-    range_t captures[MAX_CAPTURES];
-    int capture_count;
-} parse_context_t;
-
-struct expr_base;
-typedef struct expr_base* expr_t;
+#include "parser.h"
 
 typedef int (*evaluate_cb)(expr_t, parse_context_t *);
 typedef void (*free_cb)(expr_t);
@@ -113,15 +97,20 @@ expr_t all_ex(expr_t* children, int num_children) {
     return (expr_t) expr;
 }
 
-expr_t all(int count, ...) {
+expr_t all(expr_t first, ...) {
     expr_t* items;
     va_list args;
-    int index;
-    items = malloc(sizeof(expr_t) * count);
-    if (items != NULL) {
-        va_start(args, count);
-        for (index = 0; index < count; index++) {
+    int index, count = 1;
 
+    /* Count up number of args until NULL */
+    va_start(args, first);
+    while (va_arg(args, expr_t) != NULL) count++;
+    va_end(args);
+
+    if ((items = malloc(sizeof(expr_t) * count)) != NULL) {
+        items[0] = first;
+        va_start(args, first);
+        for (index = 1; index < count; index++) {
             items[index] = va_arg(args, expr_t);
         }
         va_end(args);
@@ -147,8 +136,10 @@ int evaluate_capture(expr_t me, parse_context_t *ctx) {
     valid = expr->inner->eval(expr->inner, ctx);
     if (valid) {
         match.end = ctx->pos;
-        ctx->captures[ctx->capture_count] = match;
-        ctx->capture_count++;
+        if (ctx->captures != NULL && ctx->capture_count < ctx->max_captures) {
+            ctx->captures[ctx->capture_count] = match;
+            ctx->capture_count++;
+        }
     }
     return valid;
 }
@@ -296,14 +287,25 @@ expr_t range(char min, char max) {
 
 /*******/
 
-parse_context_t* init_context(const char *string) {
+parse_context_t* init_parse_context(const char *string, int max_captures) {
     parse_context_t* ctx = malloc(sizeof(parse_context_t));
     if (ctx != NULL) {
         ctx->pos = ctx->start = string;
         ctx->end = string + strlen(string);
+        ctx->max_captures = max_captures;
+        ctx->captures = malloc(sizeof(range_t) * max_captures);
         ctx->capture_count = 0;
     }
     return ctx;
+}
+
+void free_parse_context(parse_context_t* parse_context) {
+    free(parse_context);
+}
+
+int evaluate(expr_t root, parse_context_t* parse_context)
+{
+    return root->eval(root, parse_context);
 }
 
 expr_t whitespace() {
@@ -312,6 +314,66 @@ expr_t whitespace() {
 
 expr_t digit() {
     return range('0','9');
+}
+
+expr_t number() {
+    return repeat(1,99, or(digit(), literal(".")));
+}
+
+expr_t optional(expr_t inner) {
+    return repeat(0,1, inner);
+}
+
+expr_t some(expr_t inner) {
+    return repeat(1,32767, inner);
+}
+
+/**
+ * Positional validators
+ */
+struct expr_position {
+    struct expr_base base;
+    int position;
+};
+
+int evaluate_position(expr_t me, parse_context_t* ctx) {
+    struct expr_position* expr = (struct expr_position *) me;
+    int valid = 0;
+    switch(expr->position) {
+        case -1:
+            valid = ctx->pos == ctx->end;
+            break;
+        default:
+            valid = ctx->pos == ctx->start + expr->position;
+    }
+    return valid;
+}
+
+void free_position(expr_t me) {
+    struct expr_position* expr = (struct expr_position *) me;
+    free(expr);
+}
+
+expr_t position(int index) {
+    struct expr_position* expr = (struct expr_position *) malloc(sizeof(struct expr_position));
+    if (expr != NULL) {
+        expr->base.eval = evaluate_position;
+        expr->base.free = free_position;
+        expr->position = index;
+    }
+    return (expr_t) expr;
+}
+
+expr_t start() {
+    return position(0);
+}
+
+expr_t end() {
+    return position(-1);
+}
+
+void free_expr(expr_t expr) {
+    expr->free(expr);
 }
 
 #if 0
