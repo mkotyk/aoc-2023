@@ -17,13 +17,12 @@ typedef struct {
 struct expr_base;
 typedef struct expr_base* expr_t;
 
-/* Turbo C requires a concrete definition of expr_base within the header */
-typedef int (*evaluate_cb)(expr_t, parse_context_t *);
+typedef int (*evaluate_cb)(expr_t ,parse_context_t*);
 typedef void (*free_cb)(expr_t);
 
 struct expr_base {
-    evaluate_cb eval;
-    free_cb free;
+	evaluate_cb eval;
+	free_cb free;
 };
 
 /* Expression builders */

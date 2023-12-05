@@ -7,8 +7,8 @@
 
 typedef struct {
     int card_num;
-    int winning[10];
-    int selected[25];
+	int winning[10];
+	int selected[25];
     int matches;
 } card_t;
 
@@ -16,7 +16,7 @@ typedef struct {
     unsigned long result;
     int winning_count;
     int selected_count;
-    card_t cards[200];
+	card_t cards[220];
     int card_count;
     expr_t parse_expr;
 } context_t;
@@ -66,8 +66,9 @@ void score_card_pt1(context_t* context) {
     }
 }
 
-int score_card_pt2(context_t* context, int start_card, int end_card) {
-    int c, sum = MIN(end_card, context->card_count) - MIN(start_card, context->card_count);
+unsigned long score_card_pt2(context_t* context, int start_card, int end_card) {
+	int c;
+	unsigned long sum = MIN(end_card, context->card_count) - MIN(start_card, context->card_count);
     for(c = start_card; c < end_card && c < context->card_count; c++) {
         if (context->cards[c].matches > 0) {
             sum += score_card_pt2(context, c + 1, c + 1 + context->cards[c].matches);
@@ -108,13 +109,13 @@ int main() {
     context.winning_count = 5;
     context.selected_count = 8;
     context.card_count = 0;
-    context.result = 0;
+	context.result = 0;
     timer_start(&clock);
     sample_input(sample_pt1, handle_line, &context);
-    score_card_pt1(&context);
+	score_card_pt1(&context);
     time_end(&clock, "[PART1:SAMPLE]");
     printf("result: %ld\n", context.result);
-    ASSERT_EQUAL(context.result, 13, "Part 1 sample answer did not match");
+	ASSERT_EQUAL(context.result, 13, "Part 1 sample answer did not match");
 
     context.winning_count = 10;
     context.selected_count = 25;

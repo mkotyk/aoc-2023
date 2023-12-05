@@ -1,9 +1,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
-#include <printf.h>
 
 #include "parser.h"
+
 
 /**
  * literal:  Match a literal string
@@ -292,9 +292,9 @@ parse_context_t* init_parse_context(const char *string, int max_captures) {
 }
 
 void free_parse_context(parse_context_t* parse_context) {
-    if (parse_context->captures != NULL) {
-        free(parse_context->captures);
-    }
+	if (parse_context->captures != NULL) {
+		free(parse_context->captures);
+	}
     free(parse_context);
 }
 
@@ -370,3 +370,4 @@ expr_t end() {
 void free_expr(expr_t expr) {
     expr->free(expr);
 }
+
