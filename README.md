@@ -36,3 +36,10 @@ Apple IIgs is out, there are no self hosted C compilers available.
 | PC 40    | 00:00:00 | 00:00:02 | 00:00:00 | 00:00:05 |
 | Mac | 00:00:00 | 00:00:06 | 00:00:00 | 00:00:11 |
 
+## Day 4
+
+| Computer | Sample 1 | Part 1  | Sample 2 | Part 2   |
+|----------|----------|---------|----------|----------|
+| PC 40    | 00:00:00 | 00:00:09 | 00:00:00 | 00:04:18 |
+| Mac      | N/A      | N/A     | N/A      | N/A      |
+(Haven't completed Mac due to crashing bug)

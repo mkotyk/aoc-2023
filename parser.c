@@ -5,14 +5,6 @@
 
 #include "parser.h"
 
-typedef int (*evaluate_cb)(expr_t, parse_context_t *);
-typedef void (*free_cb)(expr_t);
-
-struct expr_base {
-    evaluate_cb eval;
-    free_cb free;
-};
-
 /**
  * literal:  Match a literal string
  */
@@ -300,6 +292,9 @@ parse_context_t* init_parse_context(const char *string, int max_captures) {
 }
 
 void free_parse_context(parse_context_t* parse_context) {
+    if (parse_context->captures != NULL) {
+        free(parse_context->captures);
+    }
     free(parse_context);
 }
 
@@ -375,39 +370,3 @@ expr_t end() {
 void free_expr(expr_t expr) {
     expr->free(expr);
 }
-
-#if 0
-int main() {
-    int i;
-    const char *ptr;
-    parse_context_t* ctx = init_context("Game 12: 3 blue, 4 red; 5 red, 6 green");
-
-    expr_t color = or(literal("blue"), or(literal("green"), literal("red")));
-    expr_t outcome = all(3, capture(repeat(1,2, digit())), whitespace(), color);
-    expr_t round = repeat(1,3, or(outcome, literal(",")));
-    expr_t game = repeat(1,4, or(round, literal(";")));
-    expr_t root = all(5,
-            literal("Game"),
-            whitespace(),
-            capture(repeat(1,2, digit())),
-            literal(":"),
-            repeat(1,99, game)
-            );
-
-    root->eval(root, ctx);
-
-    printf("Matched %d chars\n", (int)(ctx->pos - ctx->start));
-    printf("Captured %d ranges:\n", ctx->capture_count);
-    for(i = 0; i < ctx->capture_count; i++) {
-        printf(" -- Capture %d: [", i);
-        ptr = ctx->captures[i].start;
-        while(ptr != ctx->captures[i].end) {
-            putchar(*ptr++);
-        }
-        printf("]\n");
-    }
-    root->free(root);
-    free(ctx);
-    return 0;
-}
-#endif
