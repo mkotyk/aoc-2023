@@ -86,14 +86,14 @@ void translate_range(vector_t* ranges, vector_t* split_ranges) {
         while (vp != NULL) {
             r = (offset_range_t *) vp->data;
             if (r->src_start <= sr->src_start && r->src_start + r->length >= sr->src_start) {
-                // Start is in range
+				/* Start is in range */
                 if (r->src_start <= sr->dst_start && r->src_start + r->length >= sr->dst_start) {
-                    // Both are in range, no split, just translate
+					/* Both are in range, no split, just translate */
                     sr->src_start = map(r, sr->src_start);
                     sr->dst_start = map(r, sr->dst_start);
                     break;
                 } else {
-                    // Start is in, but dest is out - Split
+					/* Start is in, but dest is out - Split */
                     n = malloc(sizeof(offset_range_t));
                     n->dst_start = sr->dst_start;
                     sr->dst_start = r->src_start + r->length;
@@ -104,7 +104,7 @@ void translate_range(vector_t* ranges, vector_t* split_ranges) {
                 }
             } else {
                 if (r->src_start <= sr->dst_start && r->src_start + r->length >= sr->dst_start) {
-                    // Only dest is in range - Split
+					/* Only dest is in range - Split */
                     n = malloc(sizeof(offset_range_t));
                     n->src_start = sr->src_start;
                     sr->src_start = r->src_start;
@@ -155,11 +155,10 @@ void reset_context(context_t* context) {
 
 void find_lowest_location(context_t* context) {
     int i;
-    context->result = 0xFFFFFFFF;
     vector_t split_ranges;
     vec_node_t * vp;
     offset_range_t *in, *r;
-
+    context->result = 0xFFFFFFFF;
     memset(&split_ranges, 0, sizeof(vector_t ));
     for(i = 0; i < context->num_seeds; i++) {
         in = malloc(sizeof(offset_range_t));
