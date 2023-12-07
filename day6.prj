@@ -1,0 +1,5 @@
+day6
+input (input.h)
+strtools (strtools.h)
+timer (timer.h)
+vector (vector.h)
