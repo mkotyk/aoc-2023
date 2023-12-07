@@ -6,7 +6,7 @@
 #include "macros.h"
 #include "timer.h"
 
-typedef unsigned long value_t;
+typedef double value_t;
 typedef struct {
     value_t time;
     value_t distance;
@@ -84,9 +84,9 @@ value_t calc_race_win_options(race_t* r) {
 value_t calc_race_win_options_quad(race_t* r) {
     /* Use quadratic to find the intercepts for distance on time */
     value_t f = r->time * r->time - 4 * r->distance;
-    double rv = sqrt((double)f);
-    double x1 = floor(((double)r->time - rv) / 2.0);
-    double x2 = ceil(((double)r->time + rv) / 2.0);
+    double rv = sqrt(f);
+    double x1 = floor((r->time - rv) / 2.0);
+    double x2 = ceil((r->time + rv) / 2.0);
     return (value_t) (x2 - x1 - 1);
 }
 
@@ -116,15 +116,15 @@ int main() {
     sample_input(sample, handle_line, &context);
     calc_pt1(&context);
     time_end(&clock, "[PART1:SAMPLE]");
-    printf("result: %ld\n", context.result);
-    //ASSERT_EQUAL(context.result, 288, "Part 1 sample answer did not match");
+    printf("result: %.0f\n", context.result);
+    ASSERT_EQUAL(context.result, 288, "Part 1 sample answer did not match");
 
     context.result = 0;
     timer_start(&clock);
     sample_input(puzzle, handle_line, &context);
     calc_pt1(&context);
     time_end(&clock, "[PART1:INPUT]");
-    printf("result: %ld\n", context.result);
+    printf("result: %0.f\n", context.result);
     ASSERT_EQUAL(context.result, 5133600, "Part 1 input answer did not match");
 
     context.result = 0;
@@ -132,7 +132,7 @@ int main() {
     sample_input(sample, handle_line_pt2, (void *) &context);
     time_end(&clock, "[PART2:SAMPLE]");
     calc_pt1(&context);
-    printf("result: %ld\n", context.result);
+    printf("result: %.0f\n", context.result);
     ASSERT_EQUAL(context.result,  71503, "Part 2 sample answer did not match");
 
     context.result = 0;
@@ -140,7 +140,7 @@ int main() {
     sample_input(puzzle, handle_line_pt2, &context);
     calc_pt1(&context);
     time_end(&clock, "[PART2:INPUT]");
-    printf("result: %ld\n", context.result);
+    printf("result: %.0f\n", context.result);
     ASSERT_EQUAL(context.result,  40651271, "Part 2 input answer did not match");
 
     return 0;

@@ -42,6 +42,7 @@ Apple IIgs is out, there are no self hosted C compilers available.
 |----------|----------|---------|----------|----------|
 | PC 40    | 00:00:00 | 00:00:09 | 00:00:00 | 00:04:18 |
 | Mac      | N/A      | N/A     | N/A      | N/A      |
+
 (Haven't completed Mac due to crashing bug)
 
 
@@ -50,6 +51,15 @@ Apple IIgs is out, there are no self hosted C compilers available.
 | Computer | Sample 1 | Part 1   | Sample 2 | Part 2   |
 |----------|----------|----------|----------|----------|
 | PC 40    | 00:00:00 | 00:00:01 | 00:00:00 | 00:00:01 |
-| Mac      | N/A      | N/A      | N/A      | N/A      |
+| Mac      | 00:00:00 | 00:00:02 | 00:00:00 | 00:00:02 |
 
+## Day 6
 
+| Computer | Sample 1 | Part 1   | Sample 2 | Part 2   |
+|----------|----------|----------|----------|----------|
+| PC 40    | 00:00:00 | 00:00:00 | 00:00:00 | 00:00:00 |
+| Mac      | 00:00:00 | 00:00:00 | 00:00:00 | 00:00:00 |
+
+Interesting because no .txt file created.  Seems I/O accounts for most of 
+time and probably is the significant reason Mac is 2x slower with a physical
+hard drive, while the 286 has an CF card replacement.
