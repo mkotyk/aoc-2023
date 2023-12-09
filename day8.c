@@ -107,22 +107,33 @@ value_t walk_path(context_t* context, predicate_cb p) {
     return steps;
 }
 
-value_t lcd(value_t* num, int k, int m)
-{
-    value_t lcd = m;
-    int i;
-    while(1) {
-        for (i = 0; i < k; i++) {
-            if (lcd % num[i] != 0) break;
-        }
-        if (i == k) return lcd;
-        lcd += m;
+value_t gcd (value_t a, value_t b) {
+    value_t temp;
+    while (b != 0) {
+        temp = b;
+        b = a % b;
+        a = temp;
     }
+    return a;
 }
+
+value_t lcm( value_t a, value_t b ) {
+    return a * b / gcd (a, b);
+}
+
+value_t crt (value_t* div, int k) {
+    int i;
+    value_t add = div[0], result = div[0];
+    for (i = 1 ;i < k; add = lcm(add, div[i++])) {
+        for (; result % div[i] != 0 ;result += add );
+    }
+    return result;
+}
+
 
 void calc_steps(context_t* context) {
     value_t num[20];
-    int i, j = 0, path_length = strlen(context->path);
+    int i, j = 0;
     for(i = 0; i< context->max_node; i++) {
         if (context->nodes[i].name[2] == 'A') {
             context->start = &context->nodes[i];
@@ -130,7 +141,7 @@ void calc_steps(context_t* context) {
             j++;
         }
     }
-    context->result = lcd(num, j, path_length);
+    context->result = crt(num, j);
 }
 
 int main() {
