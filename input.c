@@ -4,7 +4,7 @@
 #include "input.h"
 
 void read_input(const char *filename, cb_on_line on_line, cb_on_error on_error, void* ctx) {
-    char *ptr, buffer[255];
+    char *ptr, buffer[512];
     FILE *in;
     int line_num = 1;
     int line_length;
