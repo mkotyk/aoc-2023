@@ -14,7 +14,7 @@ enum {
     RIGHT = 8
 };
 
-typedef unsigned long value_t;
+typedef long value_t;
 typedef struct {
     int x;
     int y;
@@ -69,84 +69,7 @@ int in(const char c, const char *in, size_t s) {
     return 0;
 }
 
-void show_dist_map(context_t *c) {
-    int x, y, d;
-    for (y = 0; y < c->height; y++) {
-        for (x = 0; x < c->width; x++) {
-            d = c->dist_map[y][x];
-            putchar(d == 0?' ':d%26 + 'A');
-        }
-        putchar('\n');
-    }
-}
-
-void inside(int facing, int side, point_t* p, point_t* out) {
-    switch(facing) {
-        case UP:
-            if (side) {
-                /* Right */
-                out->x = p->x + 1;
-                out->y = p->y;
-            } else {
-                /* Left */
-                out->x = p->x - 1;
-                out->y = p->y;
-            }
-            break;
-        case DOWN:
-            if (side) {
-                /* Left */
-                out->x = p->x - 1;
-                out->y = p->y;
-            } else {
-                /* Right */
-                out->x = p->x + 1;
-                out->y = p->y;
-            }
-            break;
-        case LEFT:
-            if (side) {
-                /* Up */
-                out->x = p->x;
-                out->y = p->y - 1;
-            } else {
-                /* Down */
-                out->x = p->x;
-                out->y = p->y + 1;
-            }
-            break;
-        case RIGHT:
-            if (side) {
-                /* Down */
-                out->x = p->x;
-                out->y = p->y + 1;
-            } else {
-                /* Up */
-                out->x = p->x;
-                out->y = p->y - 1;
-            }
-            break;
-    }
-}
-
-int calc_facing(point_t* now, point_t* next) {
-    int dx = next->x - now->x;
-    int dy = next->y - now->y;
-
-    if (dx == 0) {
-        if (dy < 0) {
-            return UP;
-        } else {
-            return DOWN;
-        }
-    } else if (dx < 0) {
-        return LEFT;
-    } else {
-        return RIGHT;
-    }
-}
-
-int move_path(point_t *p, int steps, context_t *context, int side) {
+int move_path(point_t *p, int steps, context_t *context) {
     char c;
     point_t np, inside_p;
     point_t movements[4] = {
@@ -163,7 +86,7 @@ int move_path(point_t *p, int steps, context_t *context, int side) {
     };
     int i, valid = 0, facing;
 
-    switch(read_map(context, p)) {
+    switch (read_map(context, p)) {
         case 'S':
             valid = LEFT | DOWN | UP | RIGHT;
             break;
@@ -190,21 +113,13 @@ int move_path(point_t *p, int steps, context_t *context, int side) {
     ASSERT(valid, "No valid direction");
 
     for (i = 0; i < NELEM(movements); i++) {
-        if (!((1<< i) & valid)) continue;
+        if (!((1 << i) & valid)) continue;
         np = *p;
         np.x += movements[i].x;
         np.y += movements[i].y;
         c = read_map(context, &np);
         if (in(c, valid_pipes[i], 3) && read_dist(context, &np) == 0) {
             write_dist(context, &np, steps);
-            facing = calc_facing(p, &np);
-            inside(facing, side, &np, &inside_p);
-            if (inside_p.x >=0 && inside_p.x < context->width && inside_p.y>=0 && inside_p.y < context->height) {
-                if (context->map[inside_p.y][inside_p.x] == '.') {
-                    context->map[inside_p.y][inside_p.x] = 'I';
-                }
-            }
-
             *p = np;
             return 1;
         }
@@ -214,47 +129,33 @@ int move_path(point_t *p, int steps, context_t *context, int side) {
     return 0;
 }
 
-void show_map(context_t* context) {
-    int x,y;
-    printf("Map\n");
-    for(y=0;y<context->height;y++) {
-        for(x=0;x<context->width;x++) {
-            putchar(context->map[y][x]);
-        }
-        putchar('\n');
-    }
-}
-
 void walk_map(context_t *context) {
-    point_t path1 = context->start;
-    point_t path2 = context->start;
+    point_t p = context->start;
     write_dist(context, &context->start, 1);
     int steps = 1;
     while (1) {
-        if (!move_path(&path1, steps, context, 1)) break;
-        if (!move_path(&path2, steps, context, 0)) break;
+        if (!move_path(&p, steps, context)) break;
         steps++;
     }
 
-    show_dist_map(context);
-    show_map(context);
-
-    context->result = steps;
+    context->result = steps / 2;
 }
 
-void calc_inside(context_t* context) {
-    int x,y;
-    for(y=0;y<context->height;y++) {
-        for(x=0;x<context->width;x++) {
-            context->map[y][x] = context->dist_map[y][x] > 0 ? context->map[y][x] : '.';
+void calc_inside(context_t *context) {
+    int x, y, inside;
+
+    context->result = 0;
+    for (y = 0; y < context->height; y++) {
+        inside = 0;
+        for (x = 0; x < context->width; x++) {
+            if (context->dist_map[y][x] != 0) {
+                if (in(context->map[y][x], "|F7S", 4))
+                    inside = !inside;
+            } else {
+                if (inside) context->result++;
+            }
         }
     }
-    show_map(context);
-    walk_map(context);
-
-    /* Count inside */
-    show_map(context);
-
 }
 
 void init_context(context_t *context) {
@@ -297,7 +198,6 @@ int main() {
                           "L7JLJL-JLJLJL--JLJ.L";
 
 
-#if 0
     init_context(&context);
     timer_start(&clock);
     sample_input(sample, handle_line, &context);
@@ -313,7 +213,6 @@ int main() {
     time_end(&clock, "[PART1:INPUT]");
     printf("result: %ld\n", context.result);
     ASSERT_EQUAL(context.result, 6701, "Part 1 input answer did not match");
-#endif
 
     init_context(&context);
     timer_start(&clock);
@@ -340,7 +239,6 @@ int main() {
     calc_inside(&context);
     time_end(&clock, "[PART2:INPUT]");
     printf("result: %ld\n", context.result);
-    ASSERT_EQUAL(context.result, -1, "Part 2 input answer did not match");
-
+    ASSERT_EQUAL(context.result, 303, "Part 2 input answer did not match");
     return 0;
 }
